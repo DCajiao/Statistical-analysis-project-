@@ -1,6 +1,7 @@
 import csv
 from flask import Flask, jsonify, send_file
 import matplotlib.pyplot as plt
+import argparse
 import io
 import json
 
@@ -66,4 +67,7 @@ def obtener_datos_TX():
         return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=80)
+    parser = argparse.ArgumentParser(description='Run the Flask app with specified port.')
+    parser.add_argument('--port', type=int, default=5000, help='Port number (default is 5000)')
+    args = parser.parse_args()
+    app.run(debug=True, port=args.port)
