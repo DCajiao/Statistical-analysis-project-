@@ -66,4 +66,4 @@ def obtener_datos_TX():
         return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=3000)
+    app.run(debug=True, port=80)
