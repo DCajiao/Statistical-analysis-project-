@@ -6,6 +6,16 @@ import json
 
 app = Flask(__name__)
 
+@app.route('/')
+def mainpage():
+    try:
+        with open('welcometext.txt', 'r') as file:
+            texto = file.read()  # O file.readlines() si prefieres una lista de líneas
+        return f'<pre>{texto}</pre>'
+    except FileNotFoundError:
+        return jsonify({'error': 'El archivo archivo.txt no se encontró.'})
+    except Exception as e:
+        return jsonify({'error': str(e)})
 @app.route('/grafico')
 def obtener_grafico():
     # Generar datos de ejemplo
