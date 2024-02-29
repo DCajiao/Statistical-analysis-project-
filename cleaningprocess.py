@@ -6,7 +6,7 @@ import re
 # Load the dataset
 df1 = pd.read_csv("dataset/USA_CA.csv", encoding="latin1")
 df2 = pd.read_csv("dataset/USA_TX.csv", encoding="latin1")
-df3 = pd.read_csv("dataset/USA_CA.csv", encoding="latin1")
+df3 = pd.read_csv("dataset/USA_PA.csv", encoding="latin1")
 # Merge data sets into one data set
 df = pd.concat([df1, df2, df3], ignore_index=True)
 
@@ -20,6 +20,7 @@ def extract_numbers(text):
     numbers = ''.join(numbers)                # Converts the numbers found to a string
     return numbers
 #Use function to fix wrong numeric data types
+
 # Paid_Work_Hours
 # Work_At_Home_Hours
 # Importance_reducing_pollution
