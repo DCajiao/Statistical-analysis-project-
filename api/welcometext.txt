@@ -1,7 +1,0 @@
-Welcome to the API for the statistics project. 
-
-This is only a draft, however, these options are available for testing: 
-
-- https://statistical-analysis-project.onrender.com/CA -> GET the CALIFORNIA raw data
-- https://statistical-analysis-project.onrender.com/TX -> GET the TEXAS raw data
-- https://statistical-analysis-project.onrender.com/grafico -> GET a bar chart (web broser only)
