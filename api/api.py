@@ -1,7 +1,12 @@
 import csv
 import io
+import pandas as pd
 import matplotlib.pyplot as plt
 from flask import Flask, jsonify, send_file
+from tabulate import tabulate
+
+
+df = pd.read_csv("dataset/datasetcleaned.csv", encoding="latin1")
 
 app = Flask(__name__)
 
@@ -35,7 +40,6 @@ def obtener_datos():
 def obtener_datos_CA():
     return cargar_datos('dataset/USA_CA.csv')
 
-
 @app.route('/DATASET/TX')
 def obtener_datos_TX():
     return cargar_datos('dataset/USA_TX.csv')
@@ -59,6 +63,28 @@ def obtener_grafico():
     img_buffer.seek(0)
 
     plt.clf()
+
+    return send_file(img_buffer, mimetype='image/png')
+
+@app.route('/question1', methods=['GET'])
+def statistical_analysis():
+    handed_counts = df['Handed'].value_counts()
+    handed_counts_df = handed_counts.to_frame().reset_index()
+    handed_counts_df.columns = ['Laterality', 'Quantity']
+
+    plt.figure(figsize=(8, 6))
+    ax = handed_counts.plot(kind='bar', color=['blue', 'orange', 'green'])
+    for p in ax.patches:
+        ax.annotate(str(p.get_height()), (p.get_x() + p.get_width() / 2., p.get_height()), ha='center', va='bottom')
+    plt.title('Number of students by type of laterality:')
+    plt.xlabel('Laterality')
+    plt.ylabel('Number of students')
+    plt.xticks(rotation=0)
+
+    img_buffer = io.BytesIO()
+    plt.savefig(img_buffer, format='png')
+    img_buffer.seek(0)
+    plt.close()
 
     return send_file(img_buffer, mimetype='image/png')
 
