@@ -4,9 +4,9 @@ import numpy as np
 import pandas as pd
 import re
 # Load the dataset
-df1 = pd.read_csv("dataset/USA_CA.csv", encoding="latin1")
-df2 = pd.read_csv("dataset/USA_TX.csv", encoding="latin1")
-df3 = pd.read_csv("dataset/USA_PA.csv", encoding="latin1")
+df1 = pd.read_csv("../dataset/USA_CA.csv", encoding="latin1")
+df2 = pd.read_csv("../dataset/USA_TX.csv", encoding="latin1")
+df3 = pd.read_csv("../dataset/USA_PA.csv", encoding="latin1")
 # Merge data sets into one data set
 df = pd.concat([df1, df2, df3], ignore_index=True)
 
@@ -33,5 +33,5 @@ df["Sleep_Hours_Non_Schoolnight"] = pd.to_numeric(df["Sleep_Hours_Non_Schoolnigh
 #----------------------------------------------------------------
 
 #EXPORT THE MERGED, CLEAN DATASET WITH ADJUSTED DATA TYPES# Exporting the DataFrame to a CSV file
-df.to_csv('dataset/datasetcleaned.csv', index=False)
+df.to_csv('../dataset/datasetcleaned.csv', index=False)
 #----------------------------------------------------------------
