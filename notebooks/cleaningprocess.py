@@ -16,7 +16,7 @@ df = pd.concat([df1, df2, df3], ignore_index=True)
 df = df.dropna()
 #----------------------------------------------------------------
 #Defining a function to extract numbers from a string
-#primer modulo limpieza de rangos y caracteres
+#First module cleaning of ranges and characters
 def clean_ranges_and_text(value:str, option:int=1):
     """This module clean the ranges and return the lowest or bigest value depends wich option chosse the user 
     1) for the bigest
@@ -63,7 +63,7 @@ def clean_ranges_and_text(value:str, option:int=1):
     value = identify_float_pd_series(value)
     return value
 
-#segundo modulo cambio de tipos para usar en una serie
+#Second module change of types for use in a series
 def change_type(value):
     try:
         value = float(value)
