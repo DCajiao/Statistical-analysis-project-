@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <style>
+            body {
+                background-color: black;
+                color: white;
+                font-family: Arial, sans-serif;
+                },
+            h2 {
+                color: white;
+                },
+            hr {
+                border: 1px solid white;
+                }
+        </style>
+    </head>
+<body>
+    <h2>Welcome to the API for the statistics project.</h2>
+    This is the list of API functions and protocols
+    <hr>
+    https://statistical-analysis-project.onrender.com/                -> List of API functions
+
+    https://statistical-analysis-project.onrender.com/DATASET         -> GET all the Dataset cleaned
+    https://statistical-analysis-project.onrender.com/DATASET/CA      -> GET the CALIFORNIA cleaned data
+    https://statistical-analysis-project.onrender.com/DATASET/TX      -> GET the TEXAS cleaned data
+    https://statistical-analysis-project.onrender.com/DATASET/PA      -> GET the PENSILVANIA cleaned data
+
+    https://statistical-analysis-project.onrender.com/question1       -> GET ¿Cuántos estudiantes son diestros, zurdos o ambidiestros?
+    https://statistical-analysis-project.onrender.com/question1.2     -> GET ¿Cuántos estudiantes son diestros, zurdos o ambidiestros por region?
+
+    https://statistical-analysis-project.onrender.com/question2       -> GET ¿Cuántos estudiantes tienen más largo el pie derecho, el pie izquierdo o iguales?
+    https://statistical-analysis-project.onrender.com/question2.2     -> GET ¿Cuántos estudiantes tienen más largo el pie derecho, el pie izquierdo o iguales por region?
+
+    https://statistical-analysis-project.onrender.com/question3       -> GET ¿Cuál es el mes donde nacieron más estudiantes de los que participan en el Censo escolar en cada estado?
+
+    https://statistical-analysis-project.onrender.com/question4       -> GET ¿Cuál es la estación favorita de los estudiantes que participan en el Censo escolar en cada estado?
+
+    https://statistical-analysis-project.onrender.com/question5       -> GET ¿Cuál es la bebida favorita de los estudiantes que participan en el Censo escolar en cada estado?
+
+    https://statistical-analysis-project.onrender.com/question6       -> GET Histograma “tiempo que trabaja con pago el estudiante en la semana (medido en horas)”
+    https://statistical-analysis-project.onrender.com/question6.A-F   -> GET Preguntas desde la A a la F
+
+    https://statistical-analysis-project.onrender.com/question7       -> GET Pendiente Ojiva “Tiempo que dedican los estudiantes para ayudar a los quehaceres del Hogar”
+
+    https://statistical-analysis-project.onrender.com/question8-men   -> GET Diagrama de cajas para hombre
+    https://statistical-analysis-project.onrender.com/question8-women -> GET Diagrama de cajas para mujer
+    https://statistical-analysis-project.onrender.com/question8.A-G   -> GET Preguntas desde la A a la F
+
+    https://statistical-analysis-project.onrender.com/question9       -> GET tabla cruzada “¿Cuántas horas de sueño por noche suele dormir cuando no tiene clases al día siguiente?”
+    https://statistical-analysis-project.onrender.com/question9.A-E   -> GET Preguntas desde la A a la E
+    https://statistical-analysis-project.onrender.com/question9.F     -> GET Histograma por genero
+    https://statistical-analysis-project.onrender.com/question9.F.1   -> GET ¿Cuál género tiene un histograma más aplanado o chato?
+
+    https://statistical-analysis-project.onrender.com/question10      -> GET Pendiente tabla cruzada “Materia preferida en el Colegio” vs “Género”
+    <hr>
+</body>
+</html>
