@@ -218,7 +218,7 @@ def question5():
     # Plotting
     plt.figure(figsize=(10, 6))
     ax = sns.barplot(data=students_by_most_common_drink_by_region, x='Region', y='Total', hue='Most_common_beverage')
-    plt.title('Number of students born in the most common month by region')
+    plt.title('Number of the favorite drink of students in each state')
     plt.xlabel('Region')
     plt.ylabel('Number of students')
     plt.xticks(rotation=0, ha='right')
