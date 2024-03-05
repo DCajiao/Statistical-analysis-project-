@@ -1,19 +1,19 @@
 import io
-import pandas as pd
-import numpy as np
-import seaborn as sns
-import matplotlib
 import matplotlib
 import matplotlib.pyplot as plt
-matplotlib.use('Agg')
-from flask import Flask, jsonify, send_file
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from matplotlib.ticker import MultipleLocator
 from tabulate import tabulate
+from flask import Flask, jsonify, send_file
+
 #load dataset
 df = pd.read_csv("dataset/datasetcleaned.csv", encoding="latin1")
 
+#----------------------------------------------------------------
 app = Flask(__name__)
 #----------------------------------------------------------------
-
 @app.route('/')
 def mainpage():
     try:
@@ -38,6 +38,7 @@ def load_data(archivo, region=None):
         return jsonify({'error': f'El archivo {archivo} no se encontró.'})
     except Exception as e:
         return jsonify({'error': str(e)})
+
 #----------------------------------------------------------------
 @app.route('/DATASET')
 def get_data():
@@ -296,9 +297,286 @@ def question6_n():
 # ----------------------------------------------------------------
 @app.route('/question7', methods=['GET'])
 def question7():
-    text="Pending answer from Mateo"
-    return (text)
+    # Plot the Ogive
+    wah = "Work_At_Home_Hours"
+    df_wah_sorted = df.sort_values(by=wah)
+    frcumul = df_wah_sorted.reset_index().index + 1
+    fig, ax = plt.subplots(figsize=(10,7))
+    ax.set_facecolor('lightgrey')
+    ax.plot(df_wah_sorted[wah].apply(lambda x: None if x > 90 else x), frcumul, marker=".", linestyle="-", color="#B60000", markersize=5, linewidth=1)
+    ax.set_title('Ogive of Time spent by students to help with household chores')
+    ax.set_xlabel("Work at home hours per week")
+    ax.set_ylabel("Students")
+    ax.grid(True, linestyle="-", color="#E3E3E3", linewidth=2.4)
+    ax.autoscale()
+    ax.set_xlim(-0.5, 90.5)  # Adjusted x-axis limit
+    ax.set_ylim(0)
+    ax.xaxis.set_minor_locator(MultipleLocator(5))
 
+    img_buffer = io.BytesIO()
+    plt.savefig(img_buffer, format='png')
+    img_buffer.seek(0)
+    plt.close()
+    return send_file(img_buffer, mimetype='image/png')
+
+@app.route('/question7.A', methods=['GET'])
+def question7_A():
+    wah = "Work_At_Home_Hours"
+    df_wah_sorted = df.sort_values(by=wah) #we create the narray of the Work_At_Home_Hours column and sort it in ascending order
+    frcumul = df_wah_sorted.reset_index().index + 1 #create the narray of the Work_At_Home_Hours cummulative frequencep15 = df.Work_At_Home_Hours[df_wah_sorted[wah] >= 15].count()  # Número de estudiantes con horas de trabajo desde casa mayores o iguales a 15
+    p100 = df_wah_sorted.Work_At_Home_Hours.count()  # Total number of students
+    p15 = df.Work_At_Home_Hours[df_wah_sorted[wah] >= 15].count()  # Number of students with work-from-home hours greater than or equal to 15
+
+    p = p15 / p100
+    fig, ax = plt.subplots(figsize=(10,7))
+    ax.set_facecolor('lightgrey')
+    ax.plot(df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x), frcumul, marker=".", linestyle="-", color="#B60000", markersize=5, linewidth=1)
+    ax.set_xlabel("Work at home hours per week")
+    ax.set_ylabel("Students")
+    ax.grid(True, linestyle="-", color="#E3E3E3", linewidth=2.4)
+    ax.autoscale()
+    ax.set_xlim(-0.5,80.4)
+    ax.set_ylim(0)
+    ax.xaxis.set_minor_locator(MultipleLocator(5))
+    ax.axvline(x=15, label="15_hours per week")
+    ax.axhline(y=p100-p15)
+    ax.scatter(x=15,y=p100-p15, label=f"percentil = {100 - p*100:.0f}")
+    ax.legend()
+
+    ax2 = ax.twinx()
+    ax2.plot(df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x), frcumul / frcumul.max(), linestyle="", color="blue")
+    ax2.set_ylabel("Relative Cumulative Frequency students")
+    fig.set_facecolor('#FFCA68')
+    fig.tight_layout()
+    
+    img_buffer = io.BytesIO()
+    plt.savefig(img_buffer, format='png')
+    img_buffer.seek(0)
+    plt.close()
+    return send_file(img_buffer, mimetype='image/png')
+
+@app.route('/question7.B', methods=['GET'])
+def question7_B():
+    wah = "Work_At_Home_Hours"
+    df_wah_sorted = df.sort_values(by=wah) #we create the narray of the Work_At_Home_Hours column and sort it in ascending order
+    frcumul = df_wah_sorted.reset_index().index + 1 #create the narray of the Work_At_Home_Hours cummulative frequencep15 = df.Work_At_Home_Hours[df_wah_sorted[wah] >= 15].count()  # Número de estudiantes con horas de trabajo desde casa mayores o iguales a 15
+
+    students_max_5_hours = df_wah_sorted[df_wah_sorted[wah] <= 5]
+    percentage_max_5_hours = (len(students_max_5_hours) / len(df_wah_sorted)) * 100
+    position_line = frcumul.max() * (percentage_max_5_hours / 100)
+    fig, ax = plt.subplots(figsize=(10,7))
+    ax.set_facecolor('lightgrey')
+    ax.plot(df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x), frcumul, marker=".", linestyle="-", color="#B60000", markersize=5, linewidth=1)
+    ax.set_xlabel("Work at home hours per week")
+    ax.set_ylabel("Students")
+    ax.grid(True, linestyle="-", color="#E3E3E3", linewidth=2.4)
+    ax.autoscale()
+    ax.set_xlim(-0.5,80.4)
+    ax.set_ylim(0)
+    ax.axhline(y=position_line, color='green', linestyle='--', label='Max 5 hours')
+    ax.text(0.7, 0.7, f"{percentage_max_5_hours:.2f}% of students dedicate 5 hours maximum,", transform=ax.transAxes, ha='right', va='top', fontsize=12, color='black')
+    ax.xaxis.set_minor_locator(MultipleLocator(5))
+
+    ax2 = ax.twinx()
+    ax2.plot(df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x), frcumul / frcumul.max(), linestyle="", color="blue")
+    ax2.set_ylabel("Relative Cumulative Frequency students")
+    fig.set_facecolor('#FFCA68')
+    fig.tight_layout()
+    
+    img_buffer = io.BytesIO()
+    plt.savefig(img_buffer, format='png')
+    img_buffer.seek(0)
+    plt.close()
+    return send_file(img_buffer, mimetype='image/png')
+
+@app.route('/question7.C', methods=['GET'])
+def question7_C():
+    wah = "Work_At_Home_Hours"
+    df_wah_sorted = df.sort_values(by=wah) #we create the narray of the Work_At_Home_Hours column and sort it in ascending order
+    frcumul = df_wah_sorted.reset_index().index + 1 #create the narray of the Work_At_Home_Hours cummulative frequencep15 = df.Work_At_Home_Hours[df_wah_sorted[wah] >= 15].count()  # Número de estudiantes con horas de trabajo desde casa mayores o iguales a 15
+
+    df_wah_sorted_na = df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x)
+    df_wah_sorted_na = df_wah_sorted_na.dropna()
+    percentile_15 = np.percentile(df_wah_sorted_na, 15)
+    percentile_15_students = np.percentile(frcumul, 15)
+    fig, ax = plt.subplots(figsize=(10,7))
+    ax.set_facecolor('lightgrey')
+    ax.plot(df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x), frcumul, marker=".", linestyle="-", color="#B60000", markersize=5, linewidth=1, label="")
+    ax.set_xlabel("Work at home hours per week")
+    ax.set_ylabel("Students")
+    ax.grid(True, linestyle="-", color="#E3E3E3", linewidth=2.4)
+    ax.autoscale()
+    ax.set_xlim(-0.5,80.4)
+    ax.set_ylim(0)
+    ax.xaxis.set_minor_locator(MultipleLocator(5))
+    ax.axvline(x=percentile_15, color='green', linestyle='--', label='15th Percentile')
+    ax.axhline(y=percentile_15_students, color='green', linestyle='--')
+    ax.scatter(x=percentile_15, y=percentile_15_students, color='green', s=50,marker="o",alpha=True, label=f"Hours_worked = {percentile_15}")
+    ax.legend()
+
+    ax2 = ax.twinx()
+    ax2.plot(df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x), frcumul / frcumul.max(), linestyle="", color="blue")
+    ax2.set_ylabel("Relative Cumulative Frequency students")
+    ax2.yaxis.set_minor_locator(MultipleLocator(0.1))
+    fig.set_facecolor('#FFCA68')
+    fig.tight_layout()
+    
+    img_buffer = io.BytesIO()
+    plt.savefig(img_buffer, format='png')
+    img_buffer.seek(0)
+    plt.close()
+    return send_file(img_buffer, mimetype='image/png')
+
+@app.route('/question7.D', methods=['GET'])
+def question7_D():
+    wah = "Work_At_Home_Hours"
+    df_wah_sorted = df.sort_values(by=wah) #we create the narray of the Work_At_Home_Hours column and sort it in ascending order
+    frcumul = df_wah_sorted.reset_index().index + 1 #create the narray of the Work_At_Home_Hours cummulative frequencep15 = df.Work_At_Home_Hours[df_wah_sorted[wah] >= 15].count()  # Número de estudiantes con horas de trabajo desde casa mayores o iguales a 15
+
+    students_max_5_hours = df_wah_sorted[df_wah_sorted[wah] >= 5]
+    percentage_max_5_hours = (len(students_max_5_hours) / len(df_wah_sorted)) * 100
+    position_line = frcumul.max() * (percentage_max_5_hours / 100)
+    fig, ax = plt.subplots(figsize=(10,7))
+    ax.set_facecolor('lightgrey')
+    ax.plot(df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x), frcumul, marker=".", linestyle="-", color="#B60000", markersize=5, linewidth=1)
+    ax.set_xlabel("Work at home hours per week")
+    ax.set_ylabel("Students")
+    ax.grid(True, linestyle="-", color="#E3E3E3", linewidth=2.4)
+    ax.autoscale()
+    ax.set_xlim(-0.5,80.4)
+    ax.set_ylim(0)
+    ax.axhline(y=position_line, color='green', linestyle='--', label='min 5 hours')
+    ax.text(0.7, 0.7, f"{percentage_max_5_hours:.2f}% of students dedicate at least 5 hours", transform=ax.transAxes, ha='right', va='top', fontsize=12, color='black')
+    ax.xaxis.set_minor_locator(MultipleLocator(5))
+
+    ax2 = ax.twinx()
+    ax2.plot(df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x), frcumul / frcumul.max(), linestyle="", color="blue")
+    ax2.set_ylabel("Relative Cumulative Frequency students")
+    fig.set_facecolor('#FFCA68')
+    fig.tight_layout()
+    
+    img_buffer = io.BytesIO()
+    plt.savefig(img_buffer, format='png')
+    img_buffer.seek(0)
+    plt.close()
+    return send_file(img_buffer, mimetype='image/png')
+
+@app.route('/question7.E', methods=['GET'])
+def question7_E():
+    wah = "Work_At_Home_Hours"
+    df_wah_sorted = df.sort_values(by=wah) #we create the narray of the Work_At_Home_Hours column and sort it in ascending order
+    frcumul = df_wah_sorted.reset_index().index + 1 #create the narray of the Work_At_Home_Hours cummulative frequencep15 = df.Work_At_Home_Hours[df_wah_sorted[wah] >= 15].count()  # Número de estudiantes con horas de trabajo desde casa mayores o iguales a 15
+    
+    fig, ax = plt.subplots(figsize=(10,7))
+    ax.set_facecolor('lightgrey')
+    ax.plot(df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x), frcumul, marker=".", linestyle="-", color="#B60000", markersize=5, linewidth=1)
+    ax.set_xlabel("Work at home hours per week")
+    ax.set_ylabel("Students")
+    ax.grid(True, linestyle="-", color="#E3E3E3", linewidth=2.4)
+    ax.autoscale()
+    ax.set_xlim(-0.5,80.4)
+    ax.set_ylim(0)
+    ax.xaxis.set_minor_locator(MultipleLocator(5))
+    closest_index = np.abs(frcumul / frcumul.max() - 0.35).argmin()
+    min_hours = df_wah_sorted[wah].iloc[closest_index]
+    ax.text(0.7, 0.7, f"35% of estudents works at home min: {min_hours} hours" , transform=ax.transAxes, ha='right', va='top', fontsize=12, color='black')
+
+    ax2 = ax.twinx()
+    ax2.plot(df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x), frcumul / frcumul.max(), linestyle="", color="blue")
+    ax2.set_ylabel("Relative Cumulative Frequency students")
+    fig.set_facecolor('#FFCA68')
+    percentile = 35
+    ax2.axhline(percentile / 100, color='red', linestyle='--', label=f'{percentile}th Percentile')
+    ax2.legend()
+    fig.tight_layout()
+    
+    img_buffer = io.BytesIO()
+    plt.savefig(img_buffer, format='png')
+    img_buffer.seek(0)
+    plt.close()
+    return send_file(img_buffer, mimetype='image/png')
+
+@app.route('/question7.F', methods=['GET'])
+def question7_F():
+    wah = "Work_At_Home_Hours"
+    df_wah_sorted = df.sort_values(by=wah) #we create the narray of the Work_At_Home_Hours column and sort it in ascending order
+    frcumul = df_wah_sorted.reset_index().index + 1 #create the narray of the Work_At_Home_Hours cummulative frequencep15 = df.Work_At_Home_Hours[df_wah_sorted[wah] >= 15].count()  # Número de estudiantes con horas de trabajo desde casa mayores o iguales a 15
+    df_wah_sorted_na = df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x)
+    df_wah_sorted_na = df_wah_sorted_na.dropna()
+    
+    fig, ax = plt.subplots(figsize=(10,7))
+    ax.set_facecolor('lightgrey')
+    ax.plot(df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x), frcumul, marker=".", linestyle="-", color="#B60000", markersize=5, linewidth=1)
+    ax.set_xlabel("Work at home hours per week")
+    ax.set_ylabel("Students")
+    ax.grid(True, linestyle="-", color="#E3E3E3", linewidth=2.4)
+    ax.autoscale()
+    ax.set_xlim(-0.5,80.4)
+    ax.set_ylim(0)
+    ax.xaxis.set_minor_locator(MultipleLocator(5))
+    percentile_50 = np.percentile(df_wah_sorted_na, 50)
+    ax.scatter(x="", y=100, color='black', s=100, marker="<", alpha=True, label="Mode")
+    ax.legend()
+
+    ax2 = ax.twinx()
+    ax2.plot(df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x), frcumul / frcumul.max(), linestyle="", color="blue")
+    ax2.set_ylabel("Relative Cumulative Frequency students")
+    fig.set_facecolor('#FFCA68')
+    fig.tight_layout()
+    percentile = 50
+    ax.text(0.7, 0.7, f"the Mode is 2.0 hours per week", transform=ax.transAxes, ha='right', va='top', fontsize=12, color='black')
+    ax2.axhline(9.5 / 100, color='red', linestyle='--', label=f'Mode')
+    ax2.legend()
+    
+    img_buffer = io.BytesIO()
+    plt.savefig(img_buffer, format='png')
+    img_buffer.seek(0)
+    plt.close()
+    return send_file(img_buffer, mimetype='image/png')
+    
+@app.route('/question7.G', methods=['GET'])
+def question7_G():
+    wah = "Work_At_Home_Hours"
+    df_wah_sorted = df.sort_values(by=wah) #we create the narray of the Work_At_Home_Hours column and sort it in ascending order
+    df_wah_sorted_na = df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x)
+    df_wah_sorted_na = df_wah_sorted_na.dropna()
+    std_deviation = df_wah_sorted_na.std()
+    mean_hours = df_wah_sorted_na.mean()
+    # Construct the JSON response
+    results_json = {
+        "1": {
+            "Statistic": "Standard Deviation",
+            "Value": f"{std_deviation:.1f}"
+        },
+        "2": {
+            "Statistic": "Average Hours",
+            "Value": f"{mean_hours:.1f}"
+        }
+    }
+    # Return the JSON response
+    return results_json
+
+@app.route('/question7.H', methods=['GET'])
+def question7_H():
+    # Calculate skewness
+    skewness = df['Work_At_Home_Hours'].skew()
+    # Determine skewness type
+    if skewness > 0:
+        skew_type = 'Positive (left-skewed)'
+    elif skewness < 0:
+        skew_type = 'Negative (right-skewed)'
+    else:
+        skew_type = 'Symmetric'
+    # Construct the JSON response
+    results_json = {
+        "A": {
+            "Skewness type": skew_type,
+            "Skewness value": f"{skewness:.2f}"
+        }
+    }
+    # Return the JSON response
+    return results_json
+    
 # ----------------------------------------------------------------
 @app.route('/question8-men', methods=['GET'])
 def question8_men():
@@ -544,11 +822,69 @@ def question9_f_1():
 # ----------------------------------------------------------------
 @app.route('/question10', methods=['GET'])
 def question10():
-    text="Pending answer from Mateo"
-    return (text)
+    wah = "Work_At_Home_Hours"
+    df_wah_sorted = df.sort_values(by=wah)
+    df_wah_sorted_na = df_wah_sorted[wah].apply(lambda x: None if x >= 90 else x)
+    df_wah_sorted_na = df_wah_sorted_na.dropna()
+    p15 = df_wah_sorted.Work_At_Home_Hours[df_wah_sorted[wah] >= 15].count()  
+    p100 = df_wah_sorted.Work_At_Home_Hours.count()  
+    p = p15 / p100
+    
+    crosstab_table = pd.crosstab(df['Gender'], df['Favorite_School_Subject'], margins=True, margins_name="Total")
+    crosstab_table = crosstab_table.iloc[:-1, :-1]
+    
+    plt.figure(figsize=(12, 8))  # Ajustar el tamaño de la figura
+    ax = sns.countplot(data=df, x='Favorite_School_Subject', hue='Gender')
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+    
+    plt.title('Distribution of favorite school subject by gender')
+    plt.xlabel('Favorite School Subject')
+    plt.ylabel('Number of persons')
+    plt.legend(title='Gender')
+    
+    plt.annotate(f'{int(round(p * 100))}%', (0, 0), (0, -20), xycoords='axes fraction', textcoords='offset points', ha='center', fontsize=8)
+    
+    plt.tight_layout(pad=3.0)  # Ajustar el espacio entre subgráficos
+    
+    img_buffer = io.BytesIO()
+    plt.savefig(img_buffer, format='png')
+    img_buffer.seek(0)
+    plt.close()
+    return send_file(img_buffer, mimetype='image/png')
+
+@app.route('/question10.A-H', methods=['GET'])
+def question10_H():
+    # Calculate crosstab table
+    crosstab_table = pd.crosstab(df['Gender'], df['Favorite_School_Subject'])
+    
+    # Calculate total number of students
+    total_students = crosstab_table.sum().sum()
+    
+    # Calculate statistics
+    students_history_men = crosstab_table.loc[df['Gender'].unique()[0], df['Favorite_School_Subject'].unique()[0]]
+    percentage_men = crosstab_table.loc['Male'].sum() / total_students * 100
+    percentage_music = crosstab_table[df['Favorite_School_Subject'].unique()[10]].sum() / total_students * 100
+    percentage_women_other_activities = crosstab_table.loc['Female', df['Favorite_School_Subject'].unique()[6]] / crosstab_table.loc['Female'].sum() * 100
+    percentage_men_sciences = crosstab_table.loc['Male', df['Favorite_School_Subject'].unique()[1]] / crosstab_table[df['Favorite_School_Subject'].unique()[1]].sum() * 100
+    percentage_women_or_music = (crosstab_table.loc['Female'].sum() + crosstab_table[df['Favorite_School_Subject'].unique()[10]].sum() - crosstab_table.loc['Female', df['Favorite_School_Subject'].unique()[10]]) / total_students * 100
+    percentage_women_music_sciences = (crosstab_table.loc['Female', df['Favorite_School_Subject'].unique()[6]] + crosstab_table.loc['Female', df['Favorite_School_Subject'].unique()[1]]) / crosstab_table.loc['Female'].sum() * 100
+    
+    # Construct JSON response
+    results_json = {
+        "A": "Male {} students like history.".format(students_history_men),
+        "B": "{:.2f}% of the students are male.".format(percentage_men),
+        "C": "{:.2f}% of students prefer music.".format(percentage_music),
+        "D": "The {:.2f}% of women prefer other activities.".format(percentage_women_other_activities),
+        "E": "The {:.2f}% of students who prefer Science are male.".format(percentage_men_sciences),
+        "F": "The {:.2f}% are women and prefer other activities.".format(percentage_women_other_activities),
+        "G": "The {:.2f}% are female or prefer music.".format(percentage_women_or_music),
+        "H": "{:.2f}% of women like music or the Sciences.".format(percentage_women_music_sciences)
+    }
+
+    # Return JSON response
+    return results_json
 
 # ----------------------------------------------------------------
-
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

@@ -40,7 +40,15 @@
     https://statistical-analysis-project.onrender.com/question6       -> GET Histograma “tiempo que trabaja con pago el estudiante en la semana (medido en horas)”
     https://statistical-analysis-project.onrender.com/question6.A-F   -> GET Preguntas desde la A a la F
 
-    https://statistical-analysis-project.onrender.com/question7       -> GET Pendiente Ojiva “Tiempo que dedican los estudiantes para ayudar a los quehaceres del Hogar”
+    https://statistical-analysis-project.onrender.com/question7       -> GET Ojiva “Tiempo que dedican los estudiantes para ayudar a los quehaceres del Hogar”
+    https://statistical-analysis-project.onrender.com/question7.A     -> GET ¿Qué porcentaje de los estudiantes de la muestra dedican mínimo 15 horas a la semana para ayudar en sus casas?
+    https://statistical-analysis-project.onrender.com/question7.B     -> GET ¿Qué porcentaje de los estudiantes de la muestra dedican máximo 5 horas a la semana para ayudar en sus casas?
+    https://statistical-analysis-project.onrender.com/question7.C     -> GET ¿Cuál es el máximo número de horas que el 15 % de los estudiantes ayudan en sus casas?
+    https://statistical-analysis-project.onrender.com/question7.D     -> GET ¿Qué porcentaje de los estudiantes ayudan en sus casas al menos 5 horas a la semana?
+    https://statistical-analysis-project.onrender.com/question7.E     -> GET ¿Cuál es el mínimo número de horas que el 35 % de los estudiantes ayudan en sus casas?
+    https://statistical-analysis-project.onrender.com/question7.F     -> GET ¿En cuál intervalo se halla la moda?
+    https://statistical-analysis-project.onrender.com/question7.G     -> GET ¿En promedio cuántas horas ayudan en sus casas en la semana los estudiantes? ¿Cuál es la desviación estándar?
+    https://statistical-analysis-project.onrender.com/question7.H     -> GET ¿Qué tipo de asimetría presenta esta variable?
 
     https://statistical-analysis-project.onrender.com/question8-men   -> GET Diagrama de cajas para hombre
     https://statistical-analysis-project.onrender.com/question8-women -> GET Diagrama de cajas para mujer
@@ -51,7 +59,8 @@
     https://statistical-analysis-project.onrender.com/question9.F     -> GET Histograma por genero
     https://statistical-analysis-project.onrender.com/question9.F.1   -> GET ¿Cuál género tiene un histograma más aplanado o chato?
 
-    https://statistical-analysis-project.onrender.com/question10      -> GET Pendiente tabla cruzada “Materia preferida en el Colegio” vs “Género”
+    https://statistical-analysis-project.onrender.com/question10      -> GET Tabla cruzada “Materia preferida en el Colegio” vs “Género”
+    https://statistical-analysis-project.onrender.com/question10.A-H  -> GET Preguntas desde la A a la H
     <hr>
 </body>
 </html>
